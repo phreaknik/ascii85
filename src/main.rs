@@ -9,13 +9,6 @@ fn main() {
         .version(env!("CARGO_PKG_VERSION"))
         .about("Encode/decode messages to/from ascii85 encoding.")
         .author("John B. <johnboydiv@gmail.com>")
-        // .setting(AppSettings::TrailingVarArg)
-        // .arg_from_usage(
-        //     "-d, --decode=[msg] 'Decode a plain-text message from ascii85.'",
-        // )
-        // .arg_from_usage(
-        //     "-e, --encode=[msg] 'Encode a plain-text message to ascii85.'",
-        // )
         .arg(
             Arg::with_name("decode")
                 .short("d")
