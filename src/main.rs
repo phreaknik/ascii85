@@ -1,5 +1,7 @@
 extern crate clap;
+
 use clap::{App, Arg, AppSettings};
+use std::io;
 
 mod ascii85;
 
@@ -13,37 +15,49 @@ fn main() {
             Arg::with_name("decode")
                 .short("d")
                 .long("decode")
-                .value_name("msg")
                 .help("Decode a plain-text message from ascii85.")
-                .takes_value(true)
-                .multiple(true),
+                .takes_value(false)
         )
         .arg(
             Arg::with_name("encode")
                 .short("e")
                 .long("encode")
-                .value_name("msg")
                 .help("Encode a plain-text message to ascii85.")
-                .takes_value(true)
-                .multiple(true),
+                .takes_value(false)
         )
         .setting(AppSettings::ArgRequiredElseHelp)
         .get_matches();
 
-    // Read decode/encode message as vector of words
-    let v: Vec<&str> = if cli_args.is_present("decode") {
-        cli_args.values_of("decode").unwrap().collect()
-    } else {
-        cli_args.values_of("encode").unwrap().collect()
-    };
-
-    // Parse vector of words into message string
+    // Read in message to decode/encode
     let mut msg = String::new();
-    for word in v {
-        msg.push_str(word); // Concatenate word into msg
-        msg.push_str(" "); // Add a space before next word
+    if io::stdin().read_line(&mut msg).is_err() {
+        println!("Error reading input!");
     }
-    msg.pop(); // Remove trailing space
+
+    // Remove any back slashes from special characters
+    let mut skip = false; // dont skip first occurance
+    for i in 0..msg.len() {
+        if let Some('\\') = msg.chars().nth(i) {
+            // Skip every other occurance
+            if skip {
+                skip = false;
+            } else {
+                msg.remove(i);
+                skip = true;
+            }
+        }
+    }
+
+    // Strip off newline or carriage return characters from the end
+    if let Some('\n') = msg.chars().next_back() {
+        msg.pop();
+    }
+    if let Some('\r') = msg.chars().next_back() {
+        msg.pop();
+    }
+    if let Some('\n') = msg.chars().next_back() {
+        msg.pop();
+    }
 
     // Decode or encode the message
     let res = if cli_args.is_present("decode") {
