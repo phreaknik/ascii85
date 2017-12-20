@@ -5,4 +5,4 @@ https://www.reddit.com/r/dailyprogrammer/comments/7gdsy4/20171129_challenge_342_
 ## Installation & Usage
 1) Clone or download this repository.
 2) Build with `cargo build`
-3) Run `.target/debug/ascii85-codec -h` for usage instructions.
+3) Run `./target/debug/ascii85 -h` for usage instructions.
